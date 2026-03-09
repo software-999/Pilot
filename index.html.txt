@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pilotage Certificate System</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════ */
+:root {
+  --navy:    #0a1628;
+  --navy2:   #112240;
+  --blue:    #1a56db;
+  --blue2:   #3b82f6;
+  --teal:    #0891b2;
+  --green:   #059669;
+  --amber:   #d97706;
+  --red:     #dc2626;
+  --purple:  #7c3aed;
+  --bg:      #f0f4f8;
+  --white:   #ffffff;
+  --g50:     #f8fafc;
+  --g100:    #f1f5f9;
+  --g200:    #e2e8f0;
+  --g300:    #cbd5e1;
+  --g400:    #94a3b8;
+  --g500:    #64748b;
+  --g700:    #334155;
+  --g900:    #0f172a;
+  --radius:  10px;
+  --shadow:  0 2px 12px rgba(0,0,0,0.08);
+  --shadow2: 0 8px 30px rgba(0,0,0,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--g900);font-size:14px;min-height:100vh;}
+input,select,textarea{font-family:inherit;}
+
+/* ═══════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════ */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+#loginScreen.active{display:flex;align-items:center;justify-content:center;}
+
+/* ═══════════════════════════════════════
+   TOP NAV
+═══════════════════════════════════════ */
+.topnav{
+  background:var(--navy);
+  color:#fff;
+  padding:0 24px;
+  height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;letter-spacing:-0.3px;}
+.nav-logo{
+  width:32px;height:32px;background:var(--blue);border-radius:8px;
+  display:grid;place-items:center;font-size:16px;flex-shrink:0;
+}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-pill{
+  background:#1e3a5f;border-radius:20px;
+  padding:5px 14px 5px 5px;
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:12px;color:#cbd5e1;
+  border:none;font-family:inherit;
+}
+.nav-avatar{
+  width:26px;height:26px;background:var(--blue);
+  border-radius:50%;display:grid;place-items:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.live-dot{
+  display:inline-block;width:8px;height:8px;
+  background:#22c55e;border-radius:50%;
+  animation:blink 1.8s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ═══════════════════════════════════════
+   PAGE CONTAINER
+═══════════════════════════════════════ */
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 60px;}
+
+/* ═══════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════ */
+.pg-title{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;}
+.pg-sub{font-size:12px;color:var(--g400);margin-top:2px;}
+.pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+
+/* ═══════════════════════════════════════
+   BREADCRUMB
+═══════════════════════════════════════ */
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g400);margin-bottom:14px;flex-wrap:wrap;}
+.bc a{color:var(--blue);text-decoration:none;font-weight:600;}
+.bc span{color:var(--g300);}
+
+/* ═══════════════════════════════════════
+   CARDS
+═══════════════════════════════════════ */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--g200);padding:20px;}
+.card-sm{padding:16px;}
+
+/* ═══════════════════════════════════════
+   STAT GRID
+═══════════════════════════════════════ */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:700px){.stat-grid{grid-template-columns:1fr 1fr;}}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.stat-label{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.stat-val{font-size:26px;font-weight:800;color:var(--g900);}
+.stat-note{font-size:11px;color:var(--g400);margin-top:2px;}
+.stat-ico{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0;}
+
+/* ═══════════════════════════════════════
+   QUICK TILES
+═══════════════════════════════════════ */
+.tile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:700px){.tile-grid{grid-template-columns:1fr;}}
+.tile{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--g200);cursor:pointer;transition:box-shadow .2s,transform .15s;}
+.tile:hover{box-shadow:var(--shadow2);transform:translateY(-2px);}
+.tile-icon{font-size:28px;margin-bottom:10px;}
+.tile-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.tile-desc{font-size:12px;color:var(--g400);margin-bottom:14px;line-height:1.5;}
+
+/* ═══════════════════════════════════════
+   TABLE
+═══════════════════════════════════════ */
+.tbl-wrap{overflow-x:auto;}
+table.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;}
+table.tbl thead th{
+  background:var(--g50);color:var(--g500);
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+  padding:10px 14px;border-bottom:2px solid var(--g200);white-space:nowrap;
+}
+table.tbl tbody tr{transition:background .15s;}
+table.tbl tbody tr:hover{background:#f0f6ff;}
+table.tbl tbody td{padding:12px 14px;color:var(--g900);border-bottom:1px solid var(--g100);vertical-align:middle;}
+table.tbl tbody tr:last-child td{border-bottom:none;}
+
+/* ═══════════════════════════════════════
+   BADGES
+═══════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;}
+.b-green{background:#d1fae5;color:#065f46;}.b-green::before{background:#10b981;}
+.b-amber{background:#fef3c7;color:#92400e;}.b-amber::before{background:#f59e0b;}
+.b-blue{background:#dbeafe;color:#1e40af;}.b-blue::before{background:#3b82f6;}
+.b-purple{background:#ede9fe;color:#5b21b6;}.b-purple::before{background:#8b5cf6;}
+.b-red{background:#fee2e2;color:#991b1b;}.b-red::before{background:#ef4444;}
+
+/* Movement type pill */
+.mv-pill{display:inline-block;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:700;}
+.mv-arr{background:#dbeafe;color:#1e40af;}
+.mv-dep{background:#fef3c7;color:#92400e;}
+.mv-shi{background:#ede9fe;color:#5b21b6;}
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:filter .15s,transform .1s;}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-ghost{background:var(--white);color:var(--g700);border:1.5px solid var(--g200);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
+.btn-danger{background:#fee2e2;color:var(--red);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-lg{padding:12px 28px;font-size:14px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* ═══════════════════════════════════════
+   FORM
+═══════════════════════════════════════ */
+.flabel{display:block;font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.finput{width:100%;background:var(--g50);border:1.5px solid var(--g200);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--g900);outline:none;transition:border-color .2s,box-shadow .2s;}
+.finput:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(59,130,246,.1);background:#fff;}
+.finput:read-only,.finput:disabled{background:var(--g100);color:var(--g500);}
+select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2394a3b8' d='M5 7L0 2h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;}
+.fgroup{display:flex;flex-direction:column;}
+
+/* Form Sections */
+.fsec{background:var(--g50);border:1px solid var(--g200);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;}
+.fsec-title{font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.fsec-title::before{content:'';width:3px;height:14px;background:var(--blue);border-radius:2px;display:inline-block;}
+
+/* Grid helpers */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;}
+@media(max-width:680px){.g2,.g3,.g4{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+
+/* ═══════════════════════════════════════
+   ALERTS
+═══════════════════════════════════════ */
+.alert{border-radius:var(--radius);padding:12px 16px;font-size:13px;display:flex;gap:10px;margin-bottom:16px;line-height:1.5;}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;}
+.alert-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;}
+
+/* ═══════════════════════════════════════
+   STEPS BAR
+═══════════════════════════════════════ */
+.steps{display:flex;align-items:center;background:var(--white);border-radius:var(--radius);padding:12px 18px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--g200);overflow-x:auto;gap:0;}
+.step{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--g400);white-space:nowrap;}
+.step.done{color:var(--teal);}
+.step.active{color:var(--blue);}
+.step-n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;background:var(--g200);color:var(--g500);flex-shrink:0;}
+.step.done .step-n{background:var(--teal);color:#fff;}
+.step.active .step-n{background:var(--blue);color:#fff;}
+.step-line{flex:1;min-width:20px;height:2px;background:var(--g200);margin:0 8px;}
+.step-line.done{background:var(--teal);}
+
+/* ═══════════════════════════════════════
+   REVIEW ROWS
+═══════════════════════════════════════ */
+.rv-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--g100);font-size:13px;flex-wrap:wrap;gap:4px;}
+.rv-row:last-child{border-bottom:none;}
+.rv-label{color:var(--g500);font-weight:500;}
+.rv-val{color:var(--g900);font-weight:700;font-size:12.5px;text-align:right;}
+
+/* ═══════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════ */
+#loginScreen{
+  background:linear-gradient(135deg,#0a1628 0%,#112240 45%,#0891b2 100%);
+}
+.login-box{
+  background:#fff;border-radius:16px;padding:36px 32px;
+  width:100%;max-width:380px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35);
+  margin:16px;
+}
+.login-logo{width:50px;height:50px;background:var(--navy);border-radius:12px;display:grid;place-items:center;font-size:22px;margin:0 auto 14px;}
+.login-title{font-size:20px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--g400);text-align:center;margin-bottom:22px;}
+.login-hint{background:#f0f6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;font-size:11.5px;color:#1e40af;margin-bottom:18px;line-height:1.7;}
+
+/* ═══════════════════════════════════════
+   SUCCESS
+═══════════════════════════════════════ */
+.success-ring{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,#d1fae5,#6ee7b7);
+  display:grid;place-items:center;font-size:34px;
+  margin:0 auto 18px;
+  animation:pop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes pop{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.cert-box{background:var(--g50);border:2px dashed var(--g300);border-radius:10px;padding:14px;text-align:center;font-size:18px;font-weight:800;color:var(--navy);letter-spacing:3px;margin:16px 0;}
+
+/* ═══════════════════════════════════════
+   CHECKBOX
+═══════════════════════════════════════ */
+.check-row{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-bottom:8px;}
+.check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;}
+
+/* ═══════════════════════════════════════
+   DELAY SECTION
+═══════════════════════════════════════ */
+#delayBlock{display:none;background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--radius);padding:16px;margin-top:10px;}
+
+/* ═══════════════════════════════════════
+   SIGN PAD MOCK
+═══════════════════════════════════════ */
+.sign-pad{border:2px dashed var(--g300);border-radius:8px;height:70px;display:flex;align-items:center;justify-content:center;color:var(--g400);font-size:12px;cursor:pointer;background:#fff;gap:6px;}
+.sign-done{border-color:var(--teal);background:#f0fdf4;color:var(--teal);}
+
+/* ═══════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════ */
+.flex{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mt1{margin-top:6px;}
+.mt2{margin-top:12px;}
+.mt3{margin-top:20px;}
+.mb1{margin-bottom:6px;}
+.mb2{margin-bottom:12px;}
+.mb3{margin-bottom:20px;}
+.mono{font-family:'Courier New',monospace;font-size:12px;}
+.text-center{text-align:center;}
+.text-right{text-align:right;}
+.vessel-name{font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px;}
+.divider{border:none;border-top:1.5px solid var(--g200);margin:16px 0;}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     TOP NAV (hidden on login)
+═══════════════════════════════════════ -->
+<nav class="topnav" id="topNav" style="display:none;">
+  <div class="nav-brand">
+    <div class="nav-logo">⚓</div>
+    <span>Pilotage Certificate System</span>
+    <span class="live-dot" style="margin-left:4px;"></span>
+  </div>
+  <div class="nav-right">
+    <span style="font-size:11px;color:#94a3b8;display:none;" id="navDate"></span>
+    <button class="nav-pill" onclick="doLogout()">
+      <div class="nav-avatar">KP</div>
+      <span style="color:#e2e8f0;font-weight:600;">Capt. K. Praveen</span>
+      <span style="color:#64748b;">▾</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     S1 — LOGIN
+══════════════════════════════════════════════════════ -->
+<div id="loginScreen" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">⚓</div>
+    <div class="login-title">PortKonnect Pilot</div>
+    <div class="login-sub">Pilotage Certificate System · v3.2</div>
+    <div class="login-hint">
+      🔑 Demo Login<br>
+      <b>Username:</b> kpraveen &nbsp;|&nbsp; <b>Password:</b> pilot@2026
+    </div>
+    <div class="fgroup mb2">
+      <label class="flabel">Username</label>
+      <input class="finput" id="loginUser" value="kpraveen" placeholder="Enter username">
+    </div>
+    <div class="fgroup mb3" style="margin-bottom:18px;">
+      <label class="flabel">Password</label>
+      <input class="finput" id="loginPass" type="password" value="pilot@2026" placeholder="Enter password">
+    </div>
+    <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()">Sign In →</button>
+    <p style="text-align:center;font-size:11px;color:var(--g400);margin-top:14px;">🔒 Secured · Port Authority of India</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S2 — DASHBOARD
+══════════════════════════════════════════════════════ -->
+<div id="dashboardScreen" class="screen">
+  <div class="wrap">
+
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Good Morning, Capt. Praveen 👋</div>
+        <div class="pg-sub">Tuesday, 10 March 2026 · Pilotage Zone — East Anchorage</div>
+      </div>
+      <button class="btn btn-primary" onclick="go('vcnScreen')">+ New Entry</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Today's Movements</div>
+          <div class="stat-val">8</div>
+          <div class="stat-note">↑ 2 from yesterday</div>
+        </div>
+        <div class="stat-ico" style="background:#dbeafe;">🚢</div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Pending VCNs</div>
+          <div class="stat-val" style="color:var(--amber);">3</div>
+          <div class="stat-note">Awaiting entry</div>
+        </div>
+        <div class="stat-ico" style="background:#fef3c7;">⏳</div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Completed</div>
+          <div class="stat-val" style="color:var(--green);">5</div>
+          <div class="stat-note">Uploaded to PortKonnect</div>
+        </div>
+        <div class="stat-ico" style="background:#d1fae5;">✅</div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Delays Today</div>
+          <div class="stat-val" style="color:var(--red);">1</div>
+          <div class="stat-note">Under review</div>
+        </div>
+        <div class="stat-ico" style="background:#fee2e2;">⚠️</div>
+      </div>
+    </div>
+
+    <!-- QUICK TILES -->
+    <div class="tile-grid">
+      <div class="tile" onclick="go('vcnScreen')">
+        <div class="tile-icon">📋</div>
+        <div class="tile-title">VCN Readiness List</div>
+        <div class="tile-desc">3 vessels ready for pilotage. View &amp; start new entry.</div>
+        <button class="btn btn-primary btn-sm">Open List →</button>
+      </div>
+      <div class="tile" onclick="go('completedScreen')">
+        <div class="tile-icon">🗂️</div>
+        <div class="tile-title">Completed Entries</div>
+        <div class="tile-desc">5 certificates uploaded. Last: MV Pacific Dawn.</div>
+        <button class="btn btn-ghost btn-sm" style="background:#d1fae5;color:#065f46;border:none;">View All →</button>
+      </div>
+      <div class="tile">
+        <div class="tile-icon">📊</div>
+        <div class="tile-title">Monthly Summary</div>
+        <div class="tile-desc">March 2026 · 47 movements · 98.9% on-time rate.</div>
+        <button class="btn btn-ghost btn-sm">Download PDF</button>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="card">
+      <div class="flex mb2" style="justify-content:space-between;">
+        <span style="font-size:14px;font-weight:800;color:var(--navy);">Recent Activity</span>
+        <span style="font-size:11px;color:var(--g400);">Updated: 07:42 AM</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>VCN</th><th>Vessel Name</th><th>Movement</th><th>Pilot</th><th>Time</th><th>Status</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN105</td>
+              <td><span class="vessel-name">🚢 MV Pacific Dawn</span></td>
+              <td><span class="mv-pill mv-arr">Arrival</span></td>
+              <td>Capt. K. Praveen</td><td>06:15 AM</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN104</td>
+              <td><span class="vessel-name">🚢 MT Gulf Carrier</span></td>
+              <td><span class="mv-pill mv-dep">Departure</span></td>
+              <td>Capt. R. Sharma</td><td>05:30 AM</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN103</td>
+              <td><span class="vessel-name">🚢 MV Coral Bay</span></td>
+              <td><span class="mv-pill mv-shi">Shifting</span></td>
+              <td>Capt. K. Praveen</td><td>04:00 AM</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN101</td>
+              <td><span class="vessel-name">🚢 MV Ocean Star</span></td>
+              <td><span class="mv-pill mv-arr">Arrival</span></td>
+              <td>—</td><td>10:00 AM</td>
+              <td><span class="badge b-amber">Pending</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN102</td>
+              <td><span class="vessel-name">🚢 MV Sea Queen</span></td>
+              <td><span class="mv-pill mv-dep">Departure</span></td>
+              <td>—</td><td>13:30 PM</td>
+              <td><span class="badge b-amber">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S3 — VCN READINESS LIST
+══════════════════════════════════════════════════════ -->
+<div id="vcnScreen" class="screen">
+  <div class="wrap">
+    <div class="bc">
+      <a href="#" onclick="go('dashboardScreen')">Dashboard</a>
+      <span>›</span> VCN Readiness List
+    </div>
+
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">VCN Readiness List</div>
+        <div class="pg-sub">Vessels with Entry of Readiness Date ≥ Today · 10 Mar 2026</div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      ℹ️ <span>3 vessels are ready for pilotage. VCN details downloaded from PortKonnect. Weather: NE winds 12 kts · Visibility: Good.</span>
+    </div>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>VCN No.</th>
+            <th>Vessel Name</th>
+            <th>Type</th>
+            <th>LOA (m)</th>
+            <th>GRT</th>
+            <th>From → To</th>
+            <th>Readiness Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN101</td>
+              <td><span class="vessel-name">🚢 MV Ocean Star</span></td>
+              <td>Container</td>
+              <td class="mono">294.10</td>
+              <td class="mono">74,320</td>
+              <td class="mono" style="font-size:11px;">Anchorage B → Berth 12</td>
+              <td style="font-size:11.5px;">10-Mar-2026<br><b>10:00 AM</b></td>
+              <td><span class="badge b-green">Ready</span></td>
+              <td>
+                <button class="btn btn-primary btn-sm" onclick="startEntry('VCN101','MV Ocean Star','Arrival','Anchorage B','Berth 12','294.10','74320','85420','11.40','12.10')">
+                  Start Entry
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN102</td>
+              <td><span class="vessel-name">🚢 MV Sea Queen</span></td>
+              <td>Bulk Carrier</td>
+              <td class="mono">225.00</td>
+              <td class="mono">43,860</td>
+              <td class="mono" style="font-size:11px;">Berth 7 → Open Sea</td>
+              <td style="font-size:11.5px;">10-Mar-2026<br><b>13:30 PM</b></td>
+              <td><span class="badge b-green">Ready</span></td>
+              <td>
+                <button class="btn btn-primary btn-sm" onclick="startEntry('VCN102','MV Sea Queen','Departure','Berth 7','Open Sea','225.00','43860','62000','9.80','10.20')">
+                  Start Entry
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">VCN106</td>
+              <td><span class="vessel-name">🚢 MT Horizon Trader</span></td>
+              <td>Tanker</td>
+              <td class="mono">249.50</td>
+              <td class="mono">58,100</td>
+              <td class="mono" style="font-size:11px;">Berth 3 → Berth 9</td>
+              <td style="font-size:11.5px;">10-Mar-2026<br><b>16:00 PM</b></td>
+              <td><span class="badge b-amber">Pending</span></td>
+              <td>
+                <button class="btn btn-ghost btn-sm" onclick="startEntry('VCN106','MT Horizon Trader','Shifting','Berth 3','Berth 9','249.50','58100','78000','10.60','11.00')">
+                  Start Entry
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt2">
+      <button class="btn btn-ghost" onclick="go('dashboardScreen')">← Back to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S4 — PILOTAGE ENTRY FORM
+     Fields as per PDF: 1-22
+══════════════════════════════════════════════════════ -->
+<div id="entryScreen" class="screen">
+  <div class="wrap">
+    <div class="bc">
+      <a href="#" onclick="go('dashboardScreen')">Dashboard</a><span>›</span>
+      <a href="#" onclick="go('vcnScreen')">VCN List</a><span>›</span>
+      Pilotage Entry
+    </div>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step done"><div class="step-n">✓</div>VCN Selected</div>
+      <div class="step-line done"></div>
+      <div class="step active"><div class="step-n">2</div>Entry Form</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-n">3</div>Review</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-n">4</div>Upload</div>
+    </div>
+
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Pilotage Entry</div>
+        <div class="pg-sub" id="entryMeta">VCN101 · MV Ocean Star · Arrival</div>
+      </div>
+      <span class="badge b-blue" style="font-size:12px;padding:5px 12px;">In Progress</span>
+    </div>
+
+    <!-- SEC A: Vessel Info (auto-populated P) -->
+    <div class="fsec">
+      <div class="fsec-title">Vessel Information <span style="font-size:10px;color:var(--g400);font-weight:400;">(Auto-populated from PortKonnect)</span></div>
+      <div class="g4">
+        <div class="fgroup"><label class="flabel">VCN Number</label><input class="finput" id="e_vcn" readonly></div>
+        <div class="fgroup"><label class="flabel">Vessel Name <span style="color:var(--g400);font-weight:400;">(P)</span></label><input class="finput" id="e_vessel" readonly></div>
+        <div class="fgroup"><label class="flabel">IMO Number</label><input class="finput" id="e_imo" readonly value="IMO9745823"></div>
+        <div class="fgroup"><label class="flabel">Flag State</label><input class="finput" readonly value="Singapore 🇸🇬"></div>
+      </div>
+    </div>
+
+    <!-- SEC B: Movement Details (Fields 1–8) -->
+    <div class="fsec">
+      <div class="fsec-title">Movement Details <span style="font-size:10px;color:var(--g400);font-weight:400;">(Fields 1–8)</span></div>
+      <div class="g3">
+        <!-- 1. Movement Type (S) -->
+        <div class="fgroup">
+          <label class="flabel">1. Movement Type <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <select class="finput" id="e_movType">
+            <option>Arrival</option><option>Departure</option><option>Shifting</option>
+          </select>
+        </div>
+        <!-- 2. Pilot Name (S) -->
+        <div class="fgroup">
+          <label class="flabel">2. Pilot's Name <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <select class="finput" id="e_pilot">
+            <option>Capt. K. Praveen (PL-0042)</option>
+            <option>Capt. R. Sharma (PL-0031)</option>
+            <option>Capt. M. Fernandez (PL-0058)</option>
+            <option>Capt. S. Nair (PL-0027)</option>
+          </select>
+        </div>
+        <!-- 3. Additional Pilot (S) -->
+        <div class="fgroup">
+          <label class="flabel">3. Addl. Pilot's Name <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <select class="finput" id="e_addpilot">
+            <option>None</option>
+            <option>Capt. R. Sharma (PL-0031)</option>
+            <option>Capt. M. Fernandez (PL-0058)</option>
+            <option>Capt. S. Nair (PL-0027)</option>
+          </select>
+        </div>
+        <!-- 4. Vessel Name (P) — already shown above -->
+        <!-- 5. From Berth (S) -->
+        <div class="fgroup">
+          <label class="flabel">5. From Berth <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <input class="finput" id="e_from">
+        </div>
+        <!-- 6. To Berth (S) -->
+        <div class="fgroup">
+          <label class="flabel">6. To Berth <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <input class="finput" id="e_to">
+        </div>
+        <!-- 7. Boarded Date & Time (E) -->
+        <div class="fgroup">
+          <label class="flabel">7. Boarded Date &amp; Time <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input type="datetime-local" class="finput" id="e_boarded" value="2026-03-10T09:45">
+        </div>
+        <!-- 8. Disembarked Date & Time (E) -->
+        <div class="fgroup">
+          <label class="flabel">8. Disembarked Date &amp; Time <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input type="datetime-local" class="finput" id="e_disembark" value="2026-03-10T11:20">
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC C: Operational Details (Fields 9–17) -->
+    <div class="fsec">
+      <div class="fsec-title">Operational Details <span style="font-size:10px;color:var(--g400);font-weight:400;">(Fields 9–17)</span></div>
+      <div class="g4">
+        <!-- 9. Last Line Cast Off (E) -->
+        <div class="fgroup">
+          <label class="flabel">9. Last Line Cast Off <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input type="datetime-local" class="finput" value="2026-03-10T09:30">
+        </div>
+        <!-- 10. First Line Ashore (E) -->
+        <div class="fgroup">
+          <label class="flabel">10. First Line Ashore <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input type="datetime-local" class="finput" value="2026-03-10T11:15">
+        </div>
+        <!-- 11. LOA (E) -->
+        <div class="fgroup">
+          <label class="flabel">11. LOA (m) <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" id="e_loa" value="294.10">
+        </div>
+        <!-- 12. SDWT (E) -->
+        <div class="fgroup">
+          <label class="flabel">12. S.D.W.T (MT) <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" id="e_sdwt">
+        </div>
+        <!-- 13. GRT (E) -->
+        <div class="fgroup">
+          <label class="flabel">13. G.R.T <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" id="e_grt">
+        </div>
+        <!-- 14. Forward Draft (E) -->
+        <div class="fgroup">
+          <label class="flabel">14. Forward Draft (m) <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" id="e_fwddraft">
+        </div>
+        <!-- 15. AFT (E) -->
+        <div class="fgroup">
+          <label class="flabel">15. AFT Draft (m) <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" id="e_aftdraft">
+        </div>
+        <!-- 16. Tugs (S) -->
+        <div class="fgroup">
+          <label class="flabel">16. Tugs Used <span style="color:var(--red);">*</span> <em style="font-size:10px;color:var(--g400);">(S)</em></label>
+          <select class="finput" id="e_tugs">
+            <option>1</option><option selected>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+        <!-- 17. Mooring Boats (E) -->
+        <div class="fgroup">
+          <label class="flabel">17. Mooring Boats No. <em style="font-size:10px;color:var(--g400);">(E)</em></label>
+          <input class="finput" value="2">
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC D: Status — Delay / Cancellation (Fields 18–20) -->
+    <div class="fsec">
+      <div class="fsec-title">Status &amp; Exceptions</div>
+
+      <label class="check-row">
+        <input type="checkbox" id="delayCb" onchange="toggleDelay()">
+        <span>Delay Reported</span>
+      </label>
+      <label class="check-row">
+        <input type="checkbox" id="cancelCb">
+        <span>Cancellation</span>
+      </label>
+
+      <!-- Delay Detail Block (Fields 18-20) -->
+      <div id="delayBlock">
+        <div class="alert alert-warn" style="margin-bottom:12px;">⚠️ Delay will be flagged to Port Operations for review.</div>
+        <div class="g3">
+          <!-- 18. Reason for Delay (E) -->
+          <div class="fgroup">
+            <label class="flabel">18. Reason for Delay <span style="color:var(--red);">*</span></label>
+            <input class="finput" value="Traffic congestion at inner harbour channel">
+          </div>
+          <!-- 19. Delay From (E) -->
+          <div class="fgroup">
+            <label class="flabel">19. Delay From <span style="color:var(--red);">*</span></label>
+            <input type="datetime-local" class="finput" value="2026-03-10T09:15">
+          </div>
+          <!-- 20. Delay To (E) -->
+          <div class="fgroup">
+            <label class="flabel">20. Delay To <span style="color:var(--red);">*</span></label>
+            <input type="datetime-local" class="finput" value="2026-03-10T09:45">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEC E: Signatures (Fields 21) -->
+    <div class="fsec">
+      <div class="fsec-title">Signatures <span style="font-size:10px;color:var(--g400);font-weight:400;">(Fields 21)</span></div>
+      <div class="g2">
+        <div>
+          <label class="flabel">Pilot Signature <span style="color:var(--red);">*</span></label>
+          <div class="sign-pad sign-done">✅ &nbsp;Capt. K. Praveen — Signature on file</div>
+        </div>
+        <div>
+          <!-- 21. Master Signature (*Not Compulsory) -->
+          <label class="flabel">21. Master Signature <span style="color:var(--g400);font-weight:400;">(* Not Compulsory)</span></label>
+          <div class="sign-pad" onclick="this.className='sign-pad sign-done';this.innerHTML='✅ &nbsp;Master Signature captured';">
+            ✍️ &nbsp;Tap to capture / upload
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="flex">
+      <button class="btn btn-navy btn-lg" onclick="goReview()">Save &amp; Review →</button>
+      <button class="btn btn-ghost" onclick="go('vcnScreen')">← Back</button>
+      <button class="btn btn-danger" style="margin-left:auto;">🗑 Discard</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S5 — REVIEW
+══════════════════════════════════════════════════════ -->
+<div id="reviewScreen" class="screen">
+  <div class="wrap">
+    <div class="bc">
+      <a href="#" onclick="go('dashboardScreen')">Dashboard</a><span>›</span>
+      <a href="#" onclick="go('vcnScreen')">VCN List</a><span>›</span>
+      <a href="#" onclick="go('entryScreen')">Entry</a><span>›</span>
+      Review
+    </div>
+
+    <div class="steps">
+      <div class="step done"><div class="step-n">✓</div>VCN Selected</div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-n">✓</div>Entry Form</div>
+      <div class="step-line done"></div>
+      <div class="step active"><div class="step-n">3</div>Review</div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-n">4</div>Upload</div>
+    </div>
+
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Review Entry</div>
+        <div class="pg-sub">Verify all details before uploading to PortKonnect</div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      ⚠️ <b>Once uploaded, this entry cannot be modified.</b> Please check all fields carefully.
+    </div>
+
+    <div class="g2 mb3">
+
+      <!-- LEFT -->
+      <div>
+        <div class="card mb2">
+          <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">📋 Vessel &amp; Movement</div>
+          <div class="rv-row"><span class="rv-label">VCN Number</span><span class="rv-val" id="rv_vcn">VCN101</span></div>
+          <div class="rv-row"><span class="rv-label">Vessel Name</span><span class="rv-val" id="rv_vessel">MV Ocean Star</span></div>
+          <div class="rv-row"><span class="rv-label">IMO Number</span><span class="rv-val">IMO9745823</span></div>
+          <div class="rv-row"><span class="rv-label">Movement Type</span><span class="rv-val" id="rv_mov">Arrival</span></div>
+          <div class="rv-row"><span class="rv-label">From → To</span><span class="rv-val" id="rv_route">Anchorage B → Berth 12</span></div>
+          <div class="rv-row"><span class="rv-label">Boarded</span><span class="rv-val">10-Mar-2026 &nbsp;09:45</span></div>
+          <div class="rv-row"><span class="rv-label">Disembarked</span><span class="rv-val">10-Mar-2026 &nbsp;11:20</span></div>
+          <div class="rv-row"><span class="rv-label">Duration</span><span class="rv-val">1 hr 35 mins</span></div>
+        </div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">👤 Pilot Details</div>
+          <div class="rv-row"><span class="rv-label">Pilot</span><span class="rv-val">Capt. K. Praveen (PL-0042)</span></div>
+          <div class="rv-row"><span class="rv-label">Additional Pilot</span><span class="rv-val">None</span></div>
+          <div class="rv-row"><span class="rv-label">Last Line Cast Off</span><span class="rv-val">10-Mar-2026 &nbsp;09:30</span></div>
+          <div class="rv-row"><span class="rv-label">First Line Ashore</span><span class="rv-val">10-Mar-2026 &nbsp;11:15</span></div>
+          <div class="rv-row"><span class="rv-label">Pilot Signature</span><span class="rv-val" style="color:var(--teal);">✅ On File</span></div>
+          <div class="rv-row"><span class="rv-label">Master Signature</span><span class="rv-val">Not provided</span></div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div class="card mb2">
+          <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">⚙️ Operational Details</div>
+          <div class="rv-row"><span class="rv-label">LOA</span><span class="rv-val" id="rv_loa">294.10 m</span></div>
+          <div class="rv-row"><span class="rv-label">S.D.W.T</span><span class="rv-val" id="rv_sdwt">85,420 MT</span></div>
+          <div class="rv-row"><span class="rv-label">G.R.T</span><span class="rv-val" id="rv_grt">74,320</span></div>
+          <div class="rv-row"><span class="rv-label">Forward Draft</span><span class="rv-val" id="rv_fwd">11.40 m</span></div>
+          <div class="rv-row"><span class="rv-label">AFT Draft</span><span class="rv-val" id="rv_aft">12.10 m</span></div>
+          <div class="rv-row"><span class="rv-label">Tugs Used</span><span class="rv-val">2</span></div>
+          <div class="rv-row"><span class="rv-label">Mooring Boats</span><span class="rv-val">2</span></div>
+        </div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">📌 Status</div>
+          <div class="rv-row"><span class="rv-label">Delay</span><span class="rv-val" id="rv_delay" style="color:var(--green);">None ✓</span></div>
+          <div class="rv-row"><span class="rv-label">Cancellation</span><span class="rv-val" style="color:var(--green);">None ✓</span></div>
+          <div class="rv-row" style="margin-top:12px;">
+            <span style="font-size:11px;color:var(--g400);">
+              📧 On upload, notifications will be sent to Port Control, Agent &amp; concerned officials automatically.
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flex">
+      <button class="btn btn-teal btn-lg" onclick="doUpload()">⬆ Upload to PortKonnect</button>
+      <button class="btn btn-ghost" onclick="go('entryScreen')">✏ Edit</button>
+      <button class="btn btn-ghost" onclick="">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S6 — SUCCESS (Fields 22 & 23)
+══════════════════════════════════════════════════════ -->
+<div id="successScreen" class="screen">
+  <div class="wrap">
+
+    <div class="steps">
+      <div class="step done"><div class="step-n">✓</div>VCN Selected</div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-n">✓</div>Entry Form</div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-n">✓</div>Review</div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-n">✓</div>Uploaded</div>
+    </div>
+
+    <div class="card" style="max-width:540px;margin:0 auto;text-align:center;padding:36px 28px;">
+      <div class="success-ring">✅</div>
+
+      <!-- 22. Upload & Updation in PortKonnect -->
+      <div style="font-size:20px;font-weight:800;color:var(--navy);margin-bottom:6px;">
+        Entry Uploaded Successfully!
+      </div>
+      <div style="font-size:13px;color:var(--g500);margin-bottom:16px;line-height:1.6;">
+        Pilotage data for <b id="suc_vessel">MV Ocean Star (VCN101)</b> has been<br>
+        updated in PortKonnect successfully.
+      </div>
+
+      <div class="cert-box" id="suc_cert">PC-2026-0342-SIN</div>
+      <div style="font-size:11px;color:var(--g400);margin-bottom:18px;">Certificate Reference — Keep for records</div>
+
+      <!-- 23. Send Mails -->
+      <div class="card-sm" style="background:var(--g50);border:1px solid var(--g200);text-align:left;margin-bottom:22px;">
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
+          📧 Notifications Sent (Auto)
+        </div>
+        <div style="font-size:12px;color:var(--g700);line-height:2.1;">
+          ✓ &nbsp;Port Control / VTMS Control Room<br>
+          ✓ &nbsp;Pacific Marine Services Pte Ltd (Agent)<br>
+          ✓ &nbsp;Ministry of Ports &amp; Shipping<br>
+          ✓ &nbsp;Capt. K. Praveen — Confirmation Copy<br>
+          ✓ &nbsp;Vessel Master — <span id="suc_vessel2">MV Ocean Star</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn btn-primary btn-full" onclick="go('vcnScreen')">Start Next VCN Entry</button>
+        <button class="btn btn-ghost btn-full" onclick="go('dashboardScreen')">← Back to Dashboard</button>
+        <button class="btn btn-ghost btn-full" style="font-size:12px;">📄 Download Certificate PDF</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S7 — COMPLETED ENTRIES
+══════════════════════════════════════════════════════ -->
+<div id="completedScreen" class="screen">
+  <div class="wrap">
+    <div class="bc">
+      <a href="#" onclick="go('dashboardScreen')">Dashboard</a><span>›</span> Completed Entries
+    </div>
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Completed Entries</div>
+        <div class="pg-sub">All uploaded pilotage certificates · March 2026</div>
+      </div>
+      <div class="flex">
+        <button class="btn btn-ghost btn-sm">📥 Export</button>
+        <button class="btn btn-ghost btn-sm">🖨 Print</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th>Cert. Ref</th><th>VCN</th><th>Vessel</th><th>Movement</th>
+            <th>Pilot</th><th>Duration</th><th>Uploaded</th><th>Status</th><th>Action</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">PC-2026-0341</td>
+              <td class="mono">VCN105</td>
+              <td><span class="vessel-name">🚢 MV Pacific Dawn</span></td>
+              <td><span class="mv-pill mv-arr">Arrival</span></td>
+              <td>Capt. K. Praveen</td><td class="mono">1h 20m</td>
+              <td style="font-size:11px;">10-Mar-2026 06:35</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm">View</button>
+                <button class="btn btn-ghost btn-sm">PDF</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">PC-2026-0340</td>
+              <td class="mono">VCN104</td>
+              <td><span class="vessel-name">🚢 MT Gulf Carrier</span></td>
+              <td><span class="mv-pill mv-dep">Departure</span></td>
+              <td>Capt. R. Sharma</td><td class="mono">1h 05m</td>
+              <td style="font-size:11px;">10-Mar-2026 05:55</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm">View</button>
+                <button class="btn btn-ghost btn-sm">PDF</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">PC-2026-0339</td>
+              <td class="mono">VCN103</td>
+              <td><span class="vessel-name">🚢 MV Coral Bay</span></td>
+              <td><span class="mv-pill mv-shi">Shifting</span></td>
+              <td>Capt. K. Praveen</td><td class="mono">0h 45m</td>
+              <td style="font-size:11px;">10-Mar-2026 04:22</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm">View</button>
+                <button class="btn btn-ghost btn-sm">PDF</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">PC-2026-0338</td>
+              <td class="mono">VCN099</td>
+              <td><span class="vessel-name">🚢 MV Eastern Wind</span></td>
+              <td><span class="mv-pill mv-arr">Arrival</span></td>
+              <td>Capt. M. Fernandez</td><td class="mono">2h 10m</td>
+              <td style="font-size:11px;">09-Mar-2026 22:45</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm">View</button>
+                <button class="btn btn-ghost btn-sm">PDF</button>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color:var(--blue);font-weight:700;">PC-2026-0337</td>
+              <td class="mono">VCN098</td>
+              <td><span class="vessel-name">🚢 MT Northern Star</span></td>
+              <td><span class="mv-pill mv-dep">Departure</span></td>
+              <td>Capt. S. Nair</td><td class="mono">1h 50m</td>
+              <td style="font-size:11px;">09-Mar-2026 20:15</td>
+              <td><span class="badge b-purple">Uploaded</span></td>
+              <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm">View</button>
+                <button class="btn btn-ghost btn-sm">PDF</button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align:right;font-size:11px;color:var(--g400);margin-top:12px;">
+        Showing 5 of 47 · March 2026
+      </div>
+    </div>
+
+    <div class="mt2">
+      <button class="btn btn-ghost" onclick="go('dashboardScreen')">← Back to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+/* ── Screen navigation ── */
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const isLogin = id === 'loginScreen';
+  document.getElementById('topNav').style.display = isLogin ? 'none' : 'flex';
+  window.scrollTo(0,0);
+}
+
+/* ── Login ── */
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  if (!u || !p) { alert('Please enter username and password.'); return; }
+  go('dashboardScreen');
+}
+
+/* ── Logout ── */
+function doLogout() {
+  if (confirm('Are you sure you want to logout?')) { go('loginScreen'); }
+}
+
+/* ── Start entry — pre-fill form fields from VCN row ── */
+function startEntry(vcn, vessel, movType, from, to, loa, grt, sdwt, fwd, aft) {
+  // Update IMO based on vessel
+  const imoMap = {
+    'MV Ocean Star': 'IMO9745823',
+    'MV Sea Queen':  'IMO9632417',
+    'MT Horizon Trader': 'IMO9814562'
+  };
+  document.getElementById('e_vcn').value    = vcn;
+  document.getElementById('e_vessel').value = vessel;
+  document.getElementById('e_imo').value    = imoMap[vessel] || 'IMO0000000';
+  document.getElementById('e_movType').value= movType;
+  document.getElementById('e_from').value   = from;
+  document.getElementById('e_to').value     = to;
+  document.getElementById('e_loa').value    = loa;
+  document.getElementById('e_sdwt').value   = Number(sdwt).toLocaleString();
+  document.getElementById('e_grt').value    = Number(grt).toLocaleString();
+  document.getElementById('e_fwddraft').value = fwd;
+  document.getElementById('e_aftdraft').value = aft;
+  document.getElementById('entryMeta').textContent = vcn + ' · ' + vessel + ' · ' + movType;
+
+  // Reset delay
+  document.getElementById('delayCb').checked = false;
+  document.getElementById('delayBlock').style.display = 'none';
+
+  go('entryScreen');
+}
+
+/* ── Toggle delay section ── */
+function toggleDelay() {
+  const block = document.getElementById('delayBlock');
+  block.style.display = document.getElementById('delayCb').checked ? 'block' : 'none';
+}
+
+/* ── Go to review — pull values from form ── */
+function goReview() {
+  const vcn    = document.getElementById('e_vcn').value;
+  const vessel = document.getElementById('e_vessel').value;
+  const mov    = document.getElementById('e_movType').value;
+  const from   = document.getElementById('e_from').value;
+  const to     = document.getElementById('e_to').value;
+  const loa    = document.getElementById('e_loa').value;
+  const sdwt   = document.getElementById('e_sdwt').value;
+  const grt    = document.getElementById('e_grt').value;
+  const fwd    = document.getElementById('e_fwddraft').value;
+  const aft    = document.getElementById('e_aftdraft').value;
+  const delayed= document.getElementById('delayCb').checked;
+
+  document.getElementById('rv_vcn').textContent   = vcn;
+  document.getElementById('rv_vessel').textContent= vessel;
+  document.getElementById('rv_mov').textContent   = mov;
+  document.getElementById('rv_route').textContent = from + ' → ' + to;
+  document.getElementById('rv_loa').textContent   = loa + ' m';
+  document.getElementById('rv_sdwt').textContent  = sdwt + ' MT';
+  document.getElementById('rv_grt').textContent   = grt;
+  document.getElementById('rv_fwd').textContent   = fwd + ' m';
+  document.getElementById('rv_aft').textContent   = aft + ' m';
+  const delEl = document.getElementById('rv_delay');
+  if (delayed) {
+    delEl.textContent = 'Yes — reported';
+    delEl.style.color = 'var(--amber)';
+  } else {
+    delEl.textContent = 'None ✓';
+    delEl.style.color = 'var(--green)';
+  }
+  go('reviewScreen');
+}
+
+/* ── Upload ── */
+function doUpload() {
+  const vessel = document.getElementById('e_vessel').value;
+  const vcn    = document.getElementById('e_vcn').value;
+  // Generate cert ref
+  const ref = 'PC-2026-0' + (340 + Math.floor(Math.random()*5)) + '-IN';
+  document.getElementById('suc_vessel').textContent  = vessel + ' (' + vcn + ')';
+  document.getElementById('suc_vessel2').textContent = vessel;
+  document.getElementById('suc_cert').textContent    = ref;
+  go('successScreen');
+}
+</script>
+
+</body>
+</html>
